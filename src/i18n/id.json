@@ -1,0 +1,172 @@
+{
+  "app": {
+    "title": "e-Form BPR Perdana",
+    "tagline": "Solusi Perbankan Digital Anda"
+  },
+  "nav": {
+    "home": "Beranda",
+    "deposito": "Deposito",
+    "tabungan": "Tabungan",
+    "pinjaman": "Pinjaman",
+    "pengkinian": "Pengkinian Data"
+  },
+  "landing": {
+    "hero": "Selamat Datang di e-Form BPR Perdana",
+    "subtitle": "Ajukan produk perbankan Anda dengan mudah dan cepat",
+    "deposito": {
+      "title": "Deposito",
+      "desc": "Investasi aman dengan suku bunga menarik hingga 5.25% p.a.",
+      "features": [
+        "Pokok & bunga dijamin",
+        "Suku bunga kompetitif hingga 5.25%",
+        "Tenor fleksibel 1-24 bulan"
+      ]
+    },
+    "tabungan": {
+      "title": "Tabungan",
+      "desc": "Tabungan fleksibel dengan berbagai pilihan produk sesuai kebutuhan",
+      "features": [
+        "Bebas biaya admin bulanan",
+        "Penarikan mudah kapan saja",
+        "Bunga yang menarik"
+      ]
+    },
+    "pinjaman": {
+      "title": "Pinjaman",
+      "desc": "Solusi kredit untuk modal kerja dan kebutuhan aneka guna",
+      "features": [
+        "Proses persetujuan cepat",
+        "Suku bunga kompetitif",
+        "Tenor pembayaran fleksibel"
+      ]
+    },
+    "pengkinian-data": {
+      "title": "Pengkinian Data",
+      "desc": "Perbarui data nasabah Anda dengan mudah dan aman",
+      "features": [
+        "Proses sepenuhnya digital",
+        "Tanpa perlu ke kantor cabang",
+        "Data aman & terenkripsi"
+      ]
+    }
+  },
+  "actions": {
+    "start": "Mulai",
+    "next": "Berikutnya",
+    "back": "Kembali",
+    "submit": "Kirim",
+    "confirm": "Konfirmasi",
+    "saveDraft": "Simpan Draft",
+    "retry": "Coba Lagi",
+    "upload": "Unggah",
+    "capture": "Ambil Foto",
+    "change": "Ubah"
+  },
+  "ekyc": {
+    "agreement": "Perjanjian Pengguna",
+    "agreementText": "Saya menyetujui penggunaan data saya untuk verifikasi identitas elektronik (eKYC) sesuai dengan peraturan yang berlaku.",
+    "ktpUpload": "Unggah KTP",
+    "ktpUploadDesc": "Ambil atau unggah foto KTP Anda untuk verifikasi",
+    "selfie": "Ambil Selfie",
+    "selfieDesc": "Ambil foto selfie untuk verifikasi kesesuaian",
+    "dataCorrect": "Data sudah sesuai",
+    "nik": "NIK",
+    "nama": "Nama Lengkap",
+    "tanggalLahir": "Tanggal Lahir",
+    "alamat": "Alamat",
+    "jenisKelamin": "Jenis Kelamin",
+    "agama": "Agama",
+    "statusPerkawinan": "Status Perkawinan",
+    "pekerjaan": "Pekerjaan"
+  },
+  "deposito": {
+    "title": "Formulir Deposito",
+    "formTitle": "Formulir Deposito",
+    "step1": "Perjanjian",
+    "step2": "Informasi Penempatan",
+    "step3": "Unggah KTP",
+    "step4": "Data Tambahan",
+    "step5": "Selfie",
+    "step6": "Rekening Bank",
+    "step7": "Ringkasan",
+    "amount": "Jumlah Penempatan",
+    "tenor": "Jangka Waktu",
+    "aroType": "Metode Perpanjangan Deposito",
+    "aroTypePlaceholder": "Pilih metode perpanjangan",
+    "aroTypeHelper": "Pilih metode perpanjangan saat deposito jatuh tempo.",
+    "aroOptions": {
+      "aro": "ARO (Perpanjangan otomatis pokok)",
+      "aroRate": "ARO + Bunga (Perpanjangan otomatis pokok dan bunga)",
+      "nonAro": "Non-ARO (Tidak diperpanjang otomatis)"
+    },
+    "sourceOfFund": "Sumber Dana",
+    "purpose": "Tujuan Penempatan",
+    "simulation": "Simulasi Deposito",
+    "principal": "Pokok",
+    "rate": "Suku Bunga",
+    "grossInterest": "Bunga Kotor",
+    "tax": "Pajak Bunga",
+    "netInterest": "Bunga Bersih",
+    "maturityValue": "Nilai Jatuh Tempo",
+    "earlyWithdrawal": "Pencairan Dipercepat",
+    "month": "Bulan",
+    "months": "Bulan",
+    "benefits": "Keuntungan"
+  },
+  "common": {
+    "additionalData": "Data Tambahan",
+    "address": "Alamat Tinggal",
+    "occupation": "Pekerjaan",
+    "workDuration": "Lama Bekerja/Usaha",
+    "monthlyIncome": "Penghasilan Per Bulan",
+    "motherName": "Nama Ibu Kandung",
+    "lastEducation": "Pendidikan Terakhir",
+    "phoneNumber": "Nomor Handphone Aktif",
+    "workAddress": "Alamat Usaha/Tempat Kerja",
+    "bankAccount": "Rekening Bank",
+    "bankName": "Nama Bank",
+    "accountNumber": "Nomor Rekening",
+    "accountHolder": "Nama Pemegang Rekening",
+    "summary": "Ringkasan",
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "success": "Berhasil",
+    "required": "Wajib diisi"
+  },
+  "tabungan": {
+    "title": "Pembukaan Tabungan",
+    "formTitle": "Formulir Tabungan",
+    "step1": "Perjanjian",
+    "step2": "Pilih Produk",
+    "step3": "Unggah KTP",
+    "step4": "Data Tambahan",
+    "step5": "Selfie",
+    "step6": "Rekening Bank",
+    "step7": "Ringkasan"
+  },
+  "pinjaman": {
+    "title": "Pengajuan Pinjaman",
+    "formTitle": "Formulir Pinjaman",
+    "step1": "Perjanjian",
+    "step2": "Info Pinjaman",
+    "step3": "Agunan",
+    "step4": "Unggah KTP",
+    "step5": "Data Tambahan",
+    "step6": "Selfie",
+    "step7": "Ringkasan"
+  },
+  "pengkinian": {
+    "title": "Pengkinian Data",
+    "formTitle": "Formulir Pengkinian Data",
+    "step1": "Perjanjian",
+    "step2": "Data Rekening",
+    "step3": "Unggah KTP & Data Terbaru",
+    "step4": "Selfie",
+    "step5": "Ringkasan"
+  },
+  "footer": {
+    "copyright": "© 2025 BPR Perdana. Hak Cipta Dilindungi.",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Syarat & Ketentuan"
+  }
+}

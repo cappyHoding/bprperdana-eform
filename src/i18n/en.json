@@ -1,0 +1,172 @@
+{
+  "app": {
+    "title": "BPR Perdana e-Form",
+    "tagline": "Your Digital Banking Solution"
+  },
+  "nav": {
+    "home": "Home",
+    "deposito": "Time Deposit",
+    "tabungan": "Savings",
+    "pinjaman": "Loan",
+    "pengkinian": "Data Update"
+  },
+  "landing": {
+    "hero": "Welcome to BPR Perdana e-Form",
+    "subtitle": "Apply for banking products easily and quickly",
+    "deposito": {
+      "title": "Time Deposit",
+      "desc": "Safe investment with attractive interest rates up to 5.25% p.a.",
+      "features": [
+        "Guaranteed principal & interest",
+        "Competitive rates up to 5.25%",
+        "Flexible tenors 1-24 months"
+      ]
+    },
+    "tabungan": {
+      "title": "Savings",
+      "desc": "Flexible savings with various product options to suit your needs",
+      "features": [
+        "No monthly admin fees",
+        "Easy withdrawals anytime",
+        "Attractive interest rates"
+      ]
+    },
+    "pinjaman": {
+      "title": "Loan",
+      "desc": "Credit solutions for working capital and multipurpose needs",
+      "features": [
+        "Fast approval process",
+        "Competitive interest rates",
+        "Flexible repayment terms"
+      ]
+    },
+    "pengkinian-data": {
+      "title": "Data Update",
+      "desc": "Update your customer data easily and securely",
+      "features": [
+        "Fully digital process",
+        "No branch visit needed",
+        "Secure & encrypted data"
+      ]
+    }
+  },
+  "actions": {
+    "start": "Start",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "saveDraft": "Save Draft",
+    "retry": "Retry",
+    "upload": "Upload",
+    "capture": "Take Photo",
+    "change": "Change"
+  },
+  "ekyc": {
+    "agreement": "User Agreement",
+    "agreementText": "I agree to the use of my data for electronic identity verification (eKYC) in accordance with applicable regulations.",
+    "ktpUpload": "Upload ID Card",
+    "ktpUploadDesc": "Take or upload a photo of your ID card for verification",
+    "selfie": "Take Selfie",
+    "selfieDesc": "Take a selfie photo for facial verification",
+    "dataCorrect": "Data is correct",
+    "nik": "ID Number",
+    "nama": "Full Name",
+    "tanggalLahir": "Date of Birth",
+    "alamat": "Address",
+    "jenisKelamin": "Gender",
+    "agama": "Religion",
+    "statusPerkawinan": "Marital Status",
+    "pekerjaan": "Occupation"
+  },
+  "deposito": {
+    "title": "Time Deposit Form",
+    "formTitle": "Time Deposit Form",
+    "step1": "Agreement",
+    "step2": "Placement Information",
+    "step3": "Upload ID",
+    "step4": "Additional Data",
+    "step5": "Selfie",
+    "step6": "Bank Account",
+    "step7": "Summary",
+    "amount": "Placement Amount",
+    "tenor": "Period",
+    "aroType": "Deposit Renewal Method",
+    "aroTypePlaceholder": "Select renewal method",
+    "aroTypeHelper": "Choose the renewal method when the deposit matures.",
+    "aroOptions": {
+      "aro": "ARO (Automatic rollover of principal)",
+      "aroRate": "ARO + Interest (Automatic rollover of principal and interest)",
+      "nonAro": "Non-ARO (No automatic rollover)"
+    },
+    "sourceOfFund": "Source of Funds",
+    "purpose": "Placement Purpose",
+    "simulation": "Deposit Simulation",
+    "principal": "Principal",
+    "rate": "Interest Rate",
+    "grossInterest": "Gross Interest",
+    "tax": "Interest Tax",
+    "netInterest": "Net Interest",
+    "maturityValue": "Maturity Value",
+    "earlyWithdrawal": "Early Withdrawal",
+    "month": "Month",
+    "months": "Months",
+    "benefits": "Benefits"
+  },
+  "common": {
+    "additionalData": "Additional Data",
+    "address": "Residential Address",
+    "occupation": "Occupation",
+    "workDuration": "Work/Business Duration",
+    "monthlyIncome": "Monthly Income",
+    "motherName": "Mother's Maiden Name",
+    "lastEducation": "Last Education",
+    "phoneNumber": "Active Phone Number",
+    "workAddress": "Business/Workplace Address",
+    "bankAccount": "Bank Account",
+    "bankName": "Bank Name",
+    "accountNumber": "Account Number",
+    "accountHolder": "Account Holder Name",
+    "summary": "Summary",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "required": "Required"
+  },
+  "tabungan": {
+    "title": "Savings Opening",
+    "formTitle": "Savings Form",
+    "step1": "Agreement",
+    "step2": "Product Selection",
+    "step3": "Upload ID",
+    "step4": "Additional Data",
+    "step5": "Selfie",
+    "step6": "Bank Account",
+    "step7": "Summary"
+  },
+  "pinjaman": {
+    "title": "Loan Application",
+    "formTitle": "Loan Form",
+    "step1": "Agreement",
+    "step2": "Loan Information",
+    "step3": "Collateral",
+    "step4": "Upload ID",
+    "step5": "Additional Data",
+    "step6": "Selfie",
+    "step7": "Summary"
+  },
+  "pengkinian": {
+    "title": "Data Update",
+    "formTitle": "Data Update Form",
+    "step1": "Agreement",
+    "step2": "Account Data",
+    "step3": "Upload ID & Updated Data",
+    "step4": "Selfie",
+    "step5": "Summary"
+  },
+  "footer": {
+    "copyright": "© 2025 BPR Perdana. All Rights Reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  }
+}
