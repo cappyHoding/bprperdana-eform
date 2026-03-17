@@ -130,6 +130,13 @@ export interface DisbursementPayload {
   account_holder: string;
 }
 
+export interface CollateralItemPayload {
+  collateral_type: string;
+  estimated_value: number;
+  ownership_status: string;
+  description?: string;
+}
+
 // ─── API Functions ────────────────────────────────────────────────────────────
 
 /**
@@ -172,10 +179,10 @@ export async function createApplication(
   // Simpan session ke sessionStorage — interceptor akan inject otomatis mulai sekarang
   saveSession({
     applicationId: data.application_id,
-    sessionToken:  data.session_token,
-    productType:   data.product_type,
-    currentStep:   data.current_step,
-    expiresAt:     data.expires_at,
+    sessionToken: data.session_token,
+    productType: data.product_type,
+    currentStep: data.current_step,
+    expiresAt: data.expires_at,
   });
 
   return data;
@@ -256,11 +263,21 @@ export async function updateDisbursement(
   const res = await client.patch<ApiResponse<{ current_step: number }>>(
     `/applications/${appId}/disbursement`,
     {
-        ...payload,
-        bank_code: payload.bank_code || payload.bank_name
+      ...payload,
+      bank_code: payload.bank_code || payload.bank_name
     }
   );
   updateCurrentStep(res.data.data.current_step);
+}
+
+export async function updateCollateral(
+  appId: string,
+  items: CollateralItemPayload[]
+): Promise<void> {
+  await client.patch<ApiResponse<void>>(
+    `/applications/${appId}/collateral`,
+    { items }
+  );
 }
 
 /**

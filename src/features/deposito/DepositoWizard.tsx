@@ -48,6 +48,9 @@ import { SummaryStep } from './steps/SummaryStep';
 import { KtpOcrUpload } from '@/features/ekyc/KtpOcrUpload';
 import { LivenessVerification } from '@/features/ekyc';
 
+import { useResumeSession } from '@/hooks/useResumeSession';
+import { ResumeSessionBanner } from '@/components/ResumeSessionBanner';
+
 // ─── Initial State ────────────────────────────────────────────────────────────
 
 const initialFormData: DepositoFormData = {
@@ -89,6 +92,10 @@ export default function DepositoWizard() {
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const { hasResume, resumeStep, confirmResume, dismissResume } = useResumeSession(
+    'DEPOSIT',
+    (step) => setCurrentStep(step),
+  );
   const [formData, setFormData] = useState<DepositoFormData>(initialFormData);
 
   // State untuk loading dan error per-step
@@ -104,6 +111,9 @@ export default function DepositoWizard() {
     { label: t('deposito.step6') }, // Rekening Bank
     { label: t('deposito.step7') }, // Ringkasan & Submit
   ];
+
+  const resumeStepLabel = steps[resumeStep]?.label ?? '';
+
 
   // ─── Validation ─────────────────────────────────────────────────────────────
 
@@ -192,18 +202,18 @@ export default function DepositoWizard() {
     setStepError(null);
     try {
       const rolloverMap: Record<string, string> = {
-        'aro':     'ARO',
+        'aro': 'ARO',
         'aroRate': 'ARO_RATE',
-        'nonAro':  'NON_ARO',
+        'nonAro': 'NON_ARO',
       };
       await createApplication({
         product_type: 'DEPOSIT',
         deposit: {
-          product_name:       'Deposito',
-          placement_amount:   formData.info.amount,
-          tenor_months:       formData.info.tenor,
-          rollover_type:      rolloverMap[formData.info.aroType] ?? formData.info.aroType,
-          source_of_funds:    formData.info.sourceOfFund,
+          product_name: 'Deposito',
+          placement_amount: formData.info.amount,
+          tenor_months: formData.info.tenor,
+          rollover_type: rolloverMap[formData.info.aroType] ?? formData.info.aroType,
+          source_of_funds: formData.info.sourceOfFund,
           investment_purpose: formData.info.placementPurpose,
         },
       });
@@ -242,15 +252,15 @@ export default function DepositoWizard() {
     try {
       const ad = formData.additionalData;
       await updatePersonalInfo(appId, {
-        email:               ad.email,
-        phone_number:        ad.nomorHandphone,
-        phone_wa:            ad.nomorHandphone,
+        email: ad.email,
+        phone_number: ad.nomorHandphone,
+        phone_wa: ad.nomorHandphone,
         mothers_maiden_name: ad.namaIbuKandung,
-        occupation:          ad.pekerjaan,
-        work_duration:       ad.lamaBekerjaUsaha,
-        monthly_income:      ad.penghasilanPerbulan,
-        education:           ad.pendidikanTerakhir,
-        work_address:        ad.alamatUsaha,
+        occupation: ad.pekerjaan,
+        work_duration: ad.lamaBekerjaUsaha,
+        monthly_income: ad.penghasilanPerbulan,
+        education: ad.pendidikanTerakhir,
+        work_address: ad.alamatUsaha,
       });
       goNext();
     } catch (err: any) {
@@ -266,34 +276,34 @@ export default function DepositoWizard() {
    * Kirim selfie base64 ke backend untuk fraud assessment.
    */
   const handleLivenessComplete = async (selfieImage: string, transactionId?: string) => {
-  const appId = getApplicationId();
-  if (!appId) {
-    setStepError('Session tidak ditemukan. Silakan mulai ulang.');
-    return;
-  }
+    const appId = getApplicationId();
+    if (!appId) {
+      setStepError('Session tidak ditemukan. Silakan mulai ulang.');
+      return;
+    }
 
-  setFormData((prev) => ({
-    ...prev,
-    selfieImage,
-    livenessTransactionId: transactionId || null,
-  }));
+    setFormData((prev) => ({
+      ...prev,
+      selfieImage,
+      livenessTransactionId: transactionId || null,
+    }));
 
-  setSubmitting(true);
-  setStepError(null);
-  try {
-    const base64 = selfieImage.includes(',')
-      ? selfieImage.split(',')[1]
-      : selfieImage;
+    setSubmitting(true);
+    setStepError(null);
+    try {
+      const base64 = selfieImage.includes(',')
+        ? selfieImage.split(',')[1]
+        : selfieImage;
 
-    await submitLiveness(appId, base64, transactionId); // ← TAMBAH transactionId di sini
-    goNext();
-  } catch (err: any) {
-    setStepError(err.message || 'Gagal memverifikasi identitas.');
-    toast.error('Verifikasi gagal', { description: err.message });
-  } finally {
-    setSubmitting(false);
-  }
-};
+      await submitLiveness(appId, base64, transactionId); // ← TAMBAH transactionId di sini
+      goNext();
+    } catch (err: any) {
+      setStepError(err.message || 'Gagal memverifikasi identitas.');
+      toast.error('Verifikasi gagal', { description: err.message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleLivenessError = (error: string) => {
     setStepError(error);
@@ -315,8 +325,8 @@ export default function DepositoWizard() {
     setStepError(null);
     try {
       await updateDisbursement(appId, {
-        bank_name:      formData.bankAccount.bankName,
-        bank_code:      '',
+        bank_name: formData.bankAccount.bankName,
+        bank_code: '',
         account_number: formData.bankAccount.accountNumber,
         account_holder: formData.bankAccount.accountHolderName,
       });
@@ -467,6 +477,14 @@ export default function DepositoWizard() {
           <h1 className="text-3xl font-bold text-center mb-8">
             {t('deposito.formTitle')}
           </h1>
+
+          {hasResume && (
+            <ResumeSessionBanner
+              stepLabel={resumeStepLabel}
+              onResume={confirmResume}
+              onStartOver={dismissResume}
+            />
+          )}
 
           <Stepper steps={steps} currentStep={currentStep} />
 
