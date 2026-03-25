@@ -8,7 +8,8 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 import { DepositoFormData } from '@/types/domain';
 import { DEPOSITO_RATES } from '@/lib/constants';
 import { depositoSimulation, formatCurrency } from '@/lib/calc';
-import { submitProduct, mockAuth } from '@/lib/api';
+import { submitApplication } from '@/lib/api/applicationApi';
+import { getApplicationId, clearSession } from '@/lib/session';
 import { toast } from 'sonner';
 
 interface SummaryStepProps {
@@ -29,21 +30,27 @@ export function SummaryStep({ formData }: SummaryStepProps) {
   );
 
   const handleSubmit = async () => {
+    const appId = getApplicationId();
+    if (!appId) {
+      toast.error('Session tidak ditemukan', { description: 'Silakan mulai ulang pengajuan.' });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      // Mock submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const refNo = 'DEP' + Date.now().toString().slice(-8);
-      setReferenceNo(refNo);
+      await submitApplication(appId);
+      clearSession();
+
+      // Gunakan 8 karakter pertama dari application ID sebagai nomor referensi
+      setReferenceNo('DEP-' + appId.slice(0, 8).toUpperCase());
       setSubmitted(true);
-      
+
       toast.success(t('common.success'), {
         description: 'Pengajuan deposito berhasil dikirim',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast.error(t('common.error'), {
-        description: 'Gagal mengirim pengajuan',
+        description: error.message || 'Gagal mengirim pengajuan',
       });
     } finally {
       setSubmitting(false);
@@ -56,7 +63,7 @@ export function SummaryStep({ formData }: SummaryStepProps) {
         <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto">
           <CheckCircle2 className="w-12 h-12 text-success" />
         </div>
-        
+
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-success">Pengajuan Berhasil!</h2>
           <p className="text-muted-foreground">

@@ -1,3 +1,15 @@
+/**
+ * KtpOcrUpload.tsx
+ *
+ * Komponen upload foto KTP dengan OCR processing via backend.
+ *
+ * PERUBAHAN dari versi lama:
+ * - Tambah prop `appId` — dibutuhkan untuk call submitOCR(appId, base64)
+ * - OCR tidak lagi call /ekyc/ocr langsung, tapi via /applications/:id/ocr
+ *   (yang sudah ter-protect X-Session-Token via interceptor)
+ * - Response OCR dari backend (OcrResult) di-map ke KtpOcrData
+ */
+
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -8,351 +20,194 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Upload, Camera, Loader2, CheckCircle2 } from 'lucide-react';
 import { KtpOcrData } from '@/types/api';
 import { toast } from 'sonner';
-import {ocrApi} from "@/lib/api.ts";
+import { submitOCR } from '@/lib/api/applicationApi';
+import { validateKtpFile, fileToBase64 } from '@/lib/api/ekycApi';
 
 interface KtpOcrUploadProps {
+  appId: string;                                              // ← BARU: wajib untuk submitOCR
   onComplete: (data: KtpOcrData, image: string) => void;
   onError?: (error: string) => void;
   initialData?: KtpOcrData | null;
   initialImage?: string | null;
 }
 
-export function KtpOcrUpload({ onComplete, onError, initialData, initialImage }: KtpOcrUploadProps) {
+export function KtpOcrUpload({
+  appId,
+  onComplete,
+  onError,
+  initialData,
+  initialImage,
+}: KtpOcrUploadProps) {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [ocrData, setOcrData] = useState<KtpOcrData | null>(initialData || null);
   const [imagePreview, setImagePreview] = useState<string | null>(initialImage || null);
-  const [Error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error(t('common.error'), {
-        description: 'File harus berupa gambar (JPG, PNG, dll)',
-      });
+    // Validasi file
+    const validationError = validateKtpFile(file);
+    if (validationError) {
+      toast.error(t('common.error'), { description: validationError });
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('common.error'), {
-        description: 'Ukuran file maksimal 5MB',
-      });
-      return;
-    }
+    // Preview
+    const base64 = await fileToBase64(file);
+    setImagePreview(base64);
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64 = event.target?.result as string;
-      setImagePreview(base64);
-      await processOcr(file);
-    };
-    reader.readAsDataURL(file);
+    const base64Pure = base64.includes(',')
+    ? base64.split(',')[1]
+    : base64;
+
+    // Process OCR
+    await processOcr(base64Pure, file.name);
+
+    // Reset input agar file yang sama bisa dipilih ulang
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const processOcr = async (file: File) => {
+  const processOcr = async (base64: string, filename: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log('Processing OCR...');
-      const response = await ocrApi.processKtp(file)
-      // // Mock OCR response for demo
-      // await new Promise(resolve => setTimeout(resolve, 1500));
-      //
-      // const mockData: KtpOcrData = {
-      //   nik: '3174012345670001',
-      //   nama: 'BUDI SANTOSO',
-      //   tanggalLahir: '1990-01-15',
-      //   alamat: 'JL. MERDEKA NO. 123, RT 001/RW 005',
-      //   jenisKelamin: 'LAKI-LAKI',
-      //   agama: 'ISLAM',
-      //   statusPerkawinan: 'BELUM KAWIN',
-      //   pekerjaan: 'KARYAWAN SWASTA',
-      // };
-      if (response.success && response.data) {
-        setOcrData(response.data.data);
-        toast.success(t('common.success'), {
-          description: 'Data KTP berhasil diekstrak',
-        });
-      } else {
-        const errorMsg = response.message || 'OCR gagal diproses';
-        setError(errorMsg);
+      // Call backend /applications/:id/ocr (X-Session-Token otomatis dari interceptor)
+      const result = await submitOCR(appId, base64, filename);
 
-        toast.error(t('common.error'), {
-          description: errorMsg,
-        });
+      // Map OcrResult (backend format) → KtpOcrData (frontend format)
+      const ktpData: KtpOcrData = {
+        nik:               result.nik,
+        nama:              result.full_name,
+        tempat_lahir:      result.birth_place,
+        tanggal_lahir:     result.birth_date,
+        jenis_kelamin:     result.gender,
+        alamat:            result.address,
+        rt_rw:             result.rt_rw             ?? '',
+        kelurahan_desa:    result.kelurahan          ?? '',
+        kecamatan:         result.kecamatan          ?? '',
+        kabupaten_kota:    result.kabupaten_kota     ?? '',
+        provinsi:          result.provinsi           ?? '',
+        agama:             result.agama              ?? '',
+        status_perkawinan: result.status_perkawinan  ?? '',
+        pekerjaan:         result.pekerjaan          ?? '',
+        kewarganegaraan:   result.kewarganegaraan    ?? '',
+        berlaku_hingga:    result.berlaku_hingga     ?? '',
+      };
 
-        onError?.(errorMsg);
-      }
-      // setOcrData(mockData);
-      // toast.success(t('common.success'), {
-      //   description: t('ekyc.ktpUpload') + ' ' + t('common.success').toLowerCase(),
-      // });
-    } catch (error) {
-      toast.error(t('common.error'), {
-        description: 'Failed to process KTP image',
-      });
+      setOcrData(ktpData);
+      toast.success('KTP berhasil diverifikasi');
+      onComplete(ktpData, base64);
+    } catch (err: any) {
+      const msg = err.message || 'Gagal memproses KTP';
+      setError(msg);
+      onError?.(msg);
+      toast.error(t('common.error'), { description: msg });
     } finally {
       setLoading(false);
     }
   };
 
-  const canSubmit = () => {
-    if (!ocrData || !imagePreview) return false;
-    return (
-      ocrData.nik &&
-      ocrData.nama &&
-      ocrData.tanggal_lahir &&
-      ocrData.alamat
-    );
-  };
-
-  const handleConfirm = () => {
-    if (ocrData && imagePreview && canSubmit()) {
-      onComplete(ocrData, imagePreview);
-    }
-  };
-
-  const handleReset = () => {
-    setImagePreview(null);
-    setOcrData(null);
-    setError(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  // 1. Helper function to convert DD-MM-YYYY to YYYY-MM-DD
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return ""; // Handle empty values
-
-    // If the date is already in YYYY-MM-DD format, return it as is
-    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      return dateString;
-    }
-
-    const parts = dateString.split('-');
-    if (parts.length === 3) {
-      const [day, month, year] = parts;
-      return `${year}-${month}-${day}`;
-    }
-
-    return dateString; // Fallback
-  };
+  // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold">{t('ekyc.ktpUpload')}</h2>
-        <p className="text-muted-foreground">{t('ekyc.ktpUploadDesc')}</p>
-      </div>
-
-      {!imagePreview ? (
-        <Card className="p-8">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
-              <Upload className="w-12 h-12 text-primary" />
-            </div>
-            
-            <div className="text-center space-y-2">
-              <p className="font-medium">{t('actions.upload')} KTP</p>
-              <p className="text-sm text-muted-foreground">
-                JPG, PNG atau PDF (Max 5MB)
-              </p>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,.pdf"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                variant="outline"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                {t('actions.upload')}
-              </Button>
-              
-              <Button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Camera className="w-4 h-4 mr-2" />
-                {t('actions.capture')}
-              </Button>
-            </div>
-          </div>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          <Card className="p-4">
+      {/* Upload area */}
+      <div className="space-y-2">
+        <Label>{t('ekyc.ktpPhoto')}</Label>
+        <div
+          className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          {imagePreview ? (
             <img
               src={imagePreview}
               alt="KTP Preview"
-              className="w-full h-auto rounded-lg"
+              className="max-h-48 mx-auto rounded object-contain"
             />
-            {!loading && !ocrData && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-4"
-                onClick={() => {
-                  setImagePreview(null);
-                  setOcrData(null);
-                }}
-              >
-                {t('actions.change')}
-              </Button>
-            )}
-          </Card>
-
-          {loading && (
-            <Card className="p-6">
-              <div className="flex items-center justify-center gap-3">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                <span className="text-muted-foreground">{t('common.loading')}</span>
-              </div>
-            </Card>
+          ) : (
+            <div className="space-y-2">
+              <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                {t('ekyc.uploadKtpHint')}
+              </p>
+            </div>
           )}
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
+      </div>
 
-          {ocrData && (
-            <Card className="p-6 space-y-6">
-              <div className="flex items-center gap-2 text-success">
-                <CheckCircle2 className="w-5 h-5" />
-                <span className="font-medium">Data berhasil diproses - Silakan periksa dan lengkapi</span>
-              </div>
+      {/* Loading state */}
+      {loading && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          Memverifikasi KTP...
+        </div>
+      )}
 
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">Data KTP</h3>
+      {/* Error */}
+      {error && (
+        <p className="text-sm text-destructive">{error}</p>
+      )}
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="nik">
-                      {t('ekyc.nik')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="nik"
-                        value={ocrData.nik}
-                        onChange={(e) => setOcrData({...ocrData, nik: e.target.value})}
-                        required
-                    />
-                  </div>
+      {/* OCR Result */}
+      {ocrData && !loading && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-sm text-green-600">
+            <CheckCircle2 className="w-4 h-4" />
+            Data KTP berhasil dibaca
+          </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="nama">
-                      {t('ekyc.nama')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="nama"
-                        value={ocrData.nama}
-                        onChange={(e) => setOcrData({...ocrData, nama: e.target.value})}
-                        required
-                    />
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">NIK</Label>
+              <Input value={ocrData.nik} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Nama Lengkap</Label>
+              <Input value={ocrData.nama} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Tempat Lahir</Label>
+              <Input value={ocrData.tempat_lahir} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Tanggal Lahir</Label>
+              <Input value={ocrData.tanggal_lahir} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1 md:col-span-2">
+              <Label className="text-xs text-muted-foreground">Alamat</Label>
+              <Input value={ocrData.alamat} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Jenis Kelamin</Label>
+              <Input value={ocrData.jenis_kelamin} readOnly className="bg-muted" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Kewarganegaraan</Label>
+              <Input value={ocrData.kewarganegaraan} readOnly className="bg-muted" />
+            </div>
+          </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="tempat_lahir">
-                      Tempat Lahir <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="tempat_lahir"
-                        value={ocrData.tempat_lahir}
-                        onChange={(e) => setOcrData({...ocrData, tempat_lahir: e.target.value})}
-                        placeholder="Kota tempat lahir"
-                        required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="tanggalLahir">
-                      {t('ekyc.tanggalLahir')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="tanggalLahir"
-                        type="date"
-                        value={formatDateForInput(ocrData.tanggal_lahir)}
-                        onChange={(e) => setOcrData({...ocrData, tanggal_lahir: e.target.value})}
-                        required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="jenisKelamin">
-                      {t('ekyc.jenisKelamin')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="jenisKelamin"
-                        value={ocrData.jenis_kelamin}
-                        onChange={(e) => setOcrData({...ocrData, jenis_kelamin: e.target.value})}
-                        required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="agama">{t('ekyc.agama')}</Label>
-                    <Input
-                        id="agama"
-                        value={ocrData.agama}
-                        onChange={(e) => setOcrData({...ocrData, agama: e.target.value})}
-                        placeholder="Agama"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="status_perkawinan">
-                      {t('ekyc.statusPerkawinan')}
-                    </Label>
-                    <Input
-                        id="status_perkawinan"
-                        value={ocrData.status_perkawinan}
-                        onChange={(e) => setOcrData({...ocrData, status_perkawinan: e.target.value})}
-                        placeholder="Status Perkawinan"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="kewarganegaraan">Kewarganegaraan</Label>
-                    <Input
-                        id="kewarganegaraan"
-                        value={ocrData.kewarganegaraan}
-                        onChange={(e) => setOcrData({...ocrData, kewarganegaraan: e.target.value})}
-                        placeholder="WNI / WNA"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2 space-y-2">
-                    <Label htmlFor="alamatKtp">
-                      {t('ekyc.alamat')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                        id="alamatKtp"
-                        value={ocrData.alamat}
-                        onChange={(e) => setOcrData({...ocrData, alamat: e.target.value})}
-                        placeholder="Alamat sesuai KTP"
-                        required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                  type="button"
-                  onClick={handleConfirm}
-                  disabled={!canSubmit()}
-                  className="w-full"
-              >
-                {t('actions.confirm')}
-              </Button>
-            </Card>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={loading}
+          >
+            <Camera className="w-4 h-4 mr-2" />
+            Ganti Foto KTP
+          </Button>
         </div>
       )}
     </div>
