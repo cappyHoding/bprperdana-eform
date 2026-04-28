@@ -42,7 +42,8 @@ export function SummaryStep({ formData }: SummaryStepProps) {
       clearSession();
 
       // Gunakan 8 karakter pertama dari application ID sebagai nomor referensi
-      setReferenceNo('DEP-' + appId.slice(0, 8).toUpperCase());
+      // setReferenceNo('DEP-' + appId.slice(0, 8).toUpperCase());
+      setReferenceNo(appId.toUpperCase());
       setSubmitted(true);
 
       toast.success(t('common.success'), {

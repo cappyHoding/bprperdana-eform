@@ -8,6 +8,7 @@ import DepositoWizard from "./features/deposito/DepositoWizard";
 import TabunganWizard from "./features/tabungan/TabunganWizard";
 import PinjamanWizard from "./features/pinjaman/PinjamanWizard";
 import PengkinianWizard from "./features/pengkinian/PengkinianWizard";
+import StatusTrackingPage from '@/pages/StatusTrackingPage';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/tabungan" element={<TabunganWizard />} />
           <Route path="/pinjaman" element={<PinjamanWizard />} />
           <Route path="/pengkinian-data" element={<PengkinianWizard />} />
+          <Route path="/cek-status" element={<StatusTrackingPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

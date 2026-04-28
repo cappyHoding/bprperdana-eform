@@ -57,7 +57,8 @@ export function SummaryStep({ formData }: SummaryStepProps) {
     try {
       await submitApplication(appId);
       clearSession();
-      setReferenceNo('KRD-' + appId.slice(0, 8).toUpperCase());
+      // setReferenceNo('KRD-' + appId.slice(0, 8).toUpperCase());
+      setReferenceNo(appId.toUpperCase());
       setSubmitted(true);
       toast.success(t('common.success'), { description: 'Pengajuan pinjaman berhasil dikirim' });
     } catch (error: any) {
