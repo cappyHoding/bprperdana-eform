@@ -48,6 +48,15 @@
         "Tanpa perlu ke kantor cabang",
         "Data aman & terenkripsi"
       ]
+    },
+    "cek-status": {
+      "title": "Cek Status Pengajuan",
+      "desc": "Cek status pengajuan Anda",
+      "features": [
+        "Proses sepenuhnya digital",
+        "Tanpa perlu ke kantor cabang",
+        "Data aman & terenkripsi"
+      ]
     }
   },
   "actions": {

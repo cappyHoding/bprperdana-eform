@@ -56,7 +56,8 @@ export function SummaryStep({ formData, onSubmit, submitting }: SummaryStepProps
       await submitApplication(appId);
       clearSession();
 
-      setReferenceNo('TAB-' + appId.slice(0, 8).toUpperCase());
+      // setReferenceNo('TAB-' + appId.slice(0, 8).toUpperCase());
+      setReferenceNo(appId.toUpperCase());
       setSubmitted(true);
 
       toast.success(t('common.success'), {
