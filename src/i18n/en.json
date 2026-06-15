@@ -64,7 +64,61 @@
   },
   "ekyc": {
     "agreement": "User Agreement",
-    "agreementText": "I agree to the use of my data for electronic identity verification (eKYC) in accordance with applicable regulations.",
+    "subtitle": "Please read and understand the BPR Perdana eKYC Terms & Conditions before proceeding.",
+    "agreements": {
+      "pengumpulan_data" : {
+        "title": "1. Data Collection",
+        "desc": "By using this service, you consent to BPR Perdana collecting and processing the following data:",
+        "items": [
+          "Personal data embedded in your KTP and other supporting data entered into this electronic form.",
+          "A photograph of your Identity Card (KTP).",
+          "A selfie photograph and biometric scan for facial recognition and verification purposes."
+        ]
+      },
+      "penggunaan_data": {
+        "title": "2. Use of Data",
+        "desc": "The collected data will be used for:",
+        "items": [
+          "Electronic verification and validation of the customer's identity.",
+          "Compliance with Know Your Customer (KYC) principles in accordance with applicable banking regulations.",
+          "Account opening processes, administration, and the provision of BPR Perdana banking services."
+        ]
+      },
+      "keamanan_data": {
+        "title": "3. Data Security and Protection",
+        "desc": "BPR Perdana is committed to maintaining the confidentiality and protecting your personal data through the following measures:",
+        "items": [
+          "Implementing end-to-end encryption technology during data transmission",
+          "Restricting data access solely to authorized personnel and legally appointed third parties.",
+          "Complying with all applicable laws regarding Personal Data Protection (UU PDP) and Financial Services Authority (OJK) regulations."
+        ]
+      },
+      "sertifikat_digital": {
+        "title": "4. Sertifikat Digital",
+        "desc": "In terms of the identity verification process for the purpose of online account opening, your personal data in the form of demographic and/or biometric data will be checked for conformity, by PT Indonesia Digital Identity (VIDA) as our partner, with data recorded in the system of the government agency authorised to issue the relevant identity. If your personal data is verified for conformity, then VIDA as the Certification Authority certified by the Ministry of Communication and Informatics, will issue a digital certificate as evidence that your personal data has been verified and is in accordance with the data recorded in the system of the government agency authorised to issue the identity. You will use this digital certificate to perform digital signing on the VIDA Subscriber Agreement document or this Terms and Conditions. Therefore, you guarantee the accuracy of the personal data you provide and agree to the processing of your personal data for the purpose of issuing digital certificates and other services attached to digital certificates performed by VIDA. ",
+        "subdesc": "You have read, understood, and agreed to be bound by the terms and conditions of the Certification Authority’s service contained in the Subscriber Agreement, CA Privacy Policy, and VIDA's Certification Practice Statement which can be accessed via https://repo.vida.id"
+      },
+      "hak_nasabah": {
+        "title": "5. Data Subject Rights (Customer Rights)",
+        "desc": "In accordance with applicable laws, you retain the right to:",
+        "items": [
+          "Access and obtain a copy of your personal data stored by BPR Perdana.",
+          "Request updates or corrections to any inaccurate personal data.",
+          "Request the deletion or destruction of your personal data, provided it does not conflict with the data retention obligations mandated by banking regulations."
+        ]
+      },
+      "persetujuan": {
+        "title": "6. Customer Consent and Declaration",
+        "desc": "By checking the consent box, you hereby declare knowingly and voluntarily that:",
+        "items": [
+          "You have read, understood, and agreed to the terms and conditions of this Agreement.",
+          "You give full consent to BPR Perdana to process your personal data in accordance with the purposes specified above.",
+          "All data and documents you provide are true, accurate, up-to-date, and legally valid.",
+          "You are at least 17 years old and/or possess a valid KTP as a legal subject."
+        ]
+      }
+    },
+    "agreementText": "I hereby declare that I have read, understood, and agreed to the terms and conditions of services of Certification Authority, and that I am confident in the accuracy of my personal data to be used by VIDA as a partner of BPR Perdana for Digital Certificate issuance and management.",
     "ktpUpload": "Upload ID Card",
     "ktpUploadDesc": "Take or upload a photo of your ID card for verification",
     "selfie": "Take Selfie",
