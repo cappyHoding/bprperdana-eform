@@ -335,3 +335,36 @@ export async function uploadTransferProof(
         filename,
     });
 }
+
+// ─── eSign Agreement ──────────────────────────────────────────────────────────
+
+export interface ESignAgreementData {
+  application_id: string;
+  customer_name: string;
+  product_type: string;
+  sign_deadline: string | null;
+  tos_already_accepted: boolean;
+}
+
+/**
+ * Ambil data ringkasan kontrak untuk ditampilkan di halaman agreement.
+ * Endpoint PUBLIC — tidak butuh session token.
+ */
+export async function getESignAgreement(appId: string): Promise<ESignAgreementData> {
+  const res = await client.get<ApiResponse<ESignAgreementData>>(
+    `/applications/${appId}/esign-agreement`
+  );
+  return res.data.data;
+}
+
+/**
+ * Nasabah menyetujui TOS eSign VIDA.
+ * Backend menyimpan flag dan mengembalikan link TTD VIDA.
+ * Frontend harus redirect ke `sign_link`.
+ */
+export async function acceptESignTOS(appId: string): Promise<{ sign_link: string }> {
+  const res = await client.post<ApiResponse<{ sign_link: string }>>(
+    `/applications/${appId}/esign-tos`
+  );
+  return res.data.data;
+}
