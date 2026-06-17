@@ -46,6 +46,7 @@ import { ProductSelectionStep } from './steps/ProductSelectionStep';
 import { SummaryStep } from './steps/SummaryStep';
 import { KtpOcrUpload } from '@/features/ekyc/KtpOcrUpload';
 import { LivenessVerification } from '@/features/ekyc';
+import OTPVerification from '@/components/OTPVerification';
 
 import { useResumeSession } from '@/hooks/useResumeSession';
 import { ResumeSessionBanner } from '@/components/ResumeSessionBanner';
@@ -103,6 +104,7 @@ export default function TabunganWizard() {
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const [formData, setFormData] = useState<TabunganFormData>(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);
@@ -402,13 +404,19 @@ export default function TabunganWizard() {
         );
 
       case 4:
-        return (
+        return phoneVerified ? (
           <LivenessVerification
             appId={appId}
             initialSelfie={formData.selfieImage}
             ktpImage={formData.ktpImage}
             onComplete={handleLivenessComplete}
             onError={handleLivenessError}
+          />
+        ) : (
+          <OTPVerification
+            appId={appId}
+            phone={formData.additionalData.nomorHandphone}
+            onVerified={() => setPhoneVerified(true)}
           />
         );
 
