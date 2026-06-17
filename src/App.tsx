@@ -12,6 +12,7 @@ import StatusTrackingPage from '@/pages/StatusTrackingPage';
 import NotFound from "./pages/NotFound";
 import SignFailedPage from "./pages/SignFailedPage";
 import SignSuccessPage from "./pages/SignSuccessPage";
+import ESignAgreementPage from "./pages/ESignAgreementPage";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/cek-status" element={<StatusTrackingPage />} />
           <Route path="/sign-success" element={<SignSuccessPage />} />
           <Route path="/sign-failed" element={<SignFailedPage />} />
+          <Route path="/esign-agreement" element={<ESignAgreementPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
