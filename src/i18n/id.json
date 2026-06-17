@@ -73,7 +73,61 @@
   },
   "ekyc": {
     "agreement": "Perjanjian Pengguna",
-    "agreementText": "Saya menyetujui penggunaan data saya untuk verifikasi identitas elektronik (eKYC) sesuai dengan peraturan yang berlaku.",
+    "subtitle": "Silakan baca dan pahami Syarat & Ketentuan eKYC BPR Perdana sebelum melanjutkan.",
+    "agreements": {
+      "pengumpulan_data" : {
+        "title": "1. Pengumpulan Data",
+        "desc": "Dengan menggunakan layanan ini, Anda menyetujui bahwa BPR Perdana akan mengumpulkan:",
+        "items": [
+          "Data pribadi seperti nama, alamat, tanggal lahir, dan informasi kontak",
+          "Foto KTP untuk verifikasi identitas",
+          "Foto selfie untuk verifikasi kesesuaian wajah"
+        ]
+      },
+      "penggunaan_data": {
+        "title": "2. Penggunaan Data",
+        "desc": "Data yang dikumpulkan akan digunakan untuk:",
+        "items": [
+          "Memverifikasi identitas Anda secara elektronik (eKYC)",
+          "Mencegah penipuan dan aktivitas ilegal",
+          "Mematuhi peraturan perbankan yang berlaku"
+        ]
+      },
+      "keamanan_data": {
+        "title": "3. Keamanan Data",
+        "desc": "BPR Perdana berkomitmen untuk menjaga keamanan data Anda dengan:",
+        "items": [
+          "Menggunakan enkripsi untuk melindungi data selama transmisi dan penyimpanan",
+          "Membatasi akses ke data hanya untuk pihak yang berwenang",
+          "Melakukan audit keamanan secara berkala"
+        ]
+      },
+      "sertifikat_digital": {
+        "title": "4. Sertifikat Digital",
+        "desc": "Sehubungan dengan verifikasi identitas untuk tujuan Pembukaan rekening online, data pribadi Anda berupa data demografi dan/atau biometrik akan diperiksa kesesuaiannya, oleh PT Indonesia Digital Identity (VIDA) sebagai mitra kami, dengan data yang tercatat pada sistem instansi pemerintahan yang berhak mengeluarkan identitas tersebut. Apabila data pribadi Anda terverifikasi kesesuaiannya, maka VIDA sebagai Penyelenggara Sertifikasi Elektronik tersertifikasi oleh Kementerian Telekomunikasi dan Informasi, akan menerbitkan sertifikat elektronik sebagai bukti bahwa data pribadi Anda telah diverifikasi dan sesuai dengan data yang tercatat pada sistem instansi yang berhak mengeluarkan identitas tersebut. Oleh karenanya, Anda menjamin keakuratan data pribadi yang Anda sediakan dan setuju atas pemrosesan data pribadi Anda tersebut untuk tujuan penerbitan sertifikat elektronik serta layanan lain yang melekat pada sertifikat elektronik yang dilakukan oleh VIDA termasuk tanda tangan digital tersebut.",
+        "subdesc": "Anda telah membaca, memahami, dan setuju untuk terikat pada syarat dan ketentuan layanan Penyelenggara Sertifikasi Elektronik yang terdapat pada Perjanjian Kepemilikan Sertifikat Elektronik (Subscriber Agreement), Kebijakan Privasi PSrE (CA Privacy Policy), serta Pernyataan Penyelenggaraan Sertifikasi Elektronik (Certification Practice Statement) VIDA yang dapat diakses melalui https://repo.vida.id"
+      },
+      "hak_nasabah": {
+        "title": "5. Hak Nasabah",
+        "desc": "Sebagai nasabah, Anda memiliki hak untuk:",
+        "items": [
+          "Mengakses dan mendapatkan salinan data pribadi Anda yang disimpan oleh BPR Perdana.",
+          "Memohon pemutakhiran atau koreksi atas kekeliruan data pribadi Anda.",
+          "Memohon penghapusan atau pemusnahan data pribadi Anda, sepanjang tidak bertentangan dengan kewajiban retensi data yang diwajibkan oleh regulasi perbankan."
+        ]
+      },
+      "persetujuan": {
+        "title": "6. Persetujuan",
+        "desc": "Dengan memberikan tanda centang pada kotak persetujuan, Anda menyatakan secara sadar dan tanpa paksaan bahwa:",
+        "items": [
+          "Anda telah membaca, memahami, dan menerima seluruh isi Syarat dan Ketentuan ini.",
+          "Anda memberikan persetujuan penuh kepada BPR Perdana untuk memproses data pribadi Anda sesuai dengan tujuan yang tercantum di atas.",
+          "Seluruh data dan dokumen yang Anda berikan adalah benar, akurat, mutakhir, dan sah secara hukum.",
+          "Anda telah berusia minimal 17 tahun dan/atau telah memiliki KTP yang sah selaku subjek hukum."
+        ]
+      }
+    },
+    "agreementText": "Saya dengan ini menyatakan telah membaca, memahami, dan menyetujui syarat dan ketentuan layanan Penyelenggara Sertifikasi Elektronik serta menjamin keakuratan data pribadi saya untuk diproses lebih lanjut oleh VIDA sebagai mitra dari BPR Perdana untuk keperluan penerbitan dan pengelolaan Sertifikat Elektronik.",
     "ktpUpload": "Unggah KTP",
     "ktpUploadDesc": "Ambil atau unggah foto KTP Anda untuk verifikasi",
     "selfie": "Ambil Selfie",

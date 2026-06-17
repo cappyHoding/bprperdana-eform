@@ -47,6 +47,8 @@ import { BankAccountStep } from './steps/BankAccountStep';
 import { SummaryStep } from './steps/SummaryStep';
 import { KtpOcrUpload } from '@/features/ekyc/KtpOcrUpload';
 import { LivenessVerification } from '@/features/ekyc';
+import OTPVerification from '@/components/OTPVerification';
+
 
 import { useResumeSession } from '@/hooks/useResumeSession';
 import { ResumeSessionBanner } from '@/components/ResumeSessionBanner';
@@ -96,6 +98,9 @@ export default function DepositoWizard() {
     'DEPOSIT',
     (step) => setCurrentStep(step),
   );
+
+  const [phoneVerified, setPhoneVerified] = useState(false);
+
   const [formData, setFormData] = useState<DepositoFormData>(initialFormData);
 
   // State untuk loading dan error per-step
@@ -275,34 +280,42 @@ export default function DepositoWizard() {
    * Step 4 (Liveness) — dipanggil dari LivenessVerification.onComplete
    * Kirim selfie base64 ke backend untuk fraud assessment.
    */
-  const handleLivenessComplete = async (selfieImage: string, transactionId?: string) => {
+  const handleLivenessComplete = async (selfieImage: string,
+      livenessData: {
+        transactionId?: string;
+        score?: number;
+        liveImage?: boolean;
+        code?: number;
+        message?: string;
+      }
+    ) => {
     const appId = getApplicationId();
-    if (!appId) {
-      setStepError('Session tidak ditemukan. Silakan mulai ulang.');
-      return;
-    }
+  if (!appId) {
+    setStepError('Session tidak ditemukan. Silakan mulai ulang.');
+    return;
+  }
 
-    setFormData((prev) => ({
-      ...prev,
-      selfieImage,
-      livenessTransactionId: transactionId || null,
-    }));
+  setFormData((prev) => ({
+    ...prev,
+    selfieImage,
+    livenessTransactionId: livenessData.transactionId || null,
+  }));
 
-    setSubmitting(true);
-    setStepError(null);
-    try {
-      const base64 = selfieImage.includes(',')
-        ? selfieImage.split(',')[1]
-        : selfieImage;
+  setSubmitting(true);
+  setStepError(null);
+  try {
+    const base64 = selfieImage.includes(',')
+      ? selfieImage.split(',')[1]
+      : selfieImage;
 
-      await submitLiveness(appId, base64, transactionId); // ← TAMBAH transactionId di sini
-      goNext();
-    } catch (err: any) {
-      setStepError(err.message || 'Gagal memverifikasi identitas.');
-      toast.error('Verifikasi gagal', { description: err.message });
-    } finally {
-      setSubmitting(false);
-    }
+    await submitLiveness(appId, base64, livenessData);
+    goNext();
+  } catch (err: any) {
+    setStepError(err.message || 'Gagal memverifikasi identitas.');
+    toast.error('Verifikasi gagal', { description: err.message });
+  } finally {
+    setSubmitting(false);
+  }
   };
 
   const handleLivenessError = (error: string) => {
@@ -353,6 +366,7 @@ export default function DepositoWizard() {
     setStepError(null);
     try {
       await submitApplication(appId);
+      localStorage.setItem('product_type', 'DEPOSIT');
       clearSession(); // bersihkan session setelah submit berhasil
       toast.success('Pengajuan berhasil dikirim!');
       navigate('/success');
@@ -429,13 +443,19 @@ export default function DepositoWizard() {
       case 4:
         // LivenessVerification handle getToken + SDK init + submit secara internal.
         // Perlu pass appId untuk getLivenessToken(appId).
-        return (
+        return phoneVerified ? (
           <LivenessVerification
             appId={appId}
             initialSelfie={formData.selfieImage}
             ktpImage={formData.ktpImage}
             onComplete={handleLivenessComplete}
             onError={handleLivenessError}
+          />
+        ) : (
+          <OTPVerification
+            appId={appId}
+            phone={formData.additionalData.nomorHandphone}
+            onVerified={() => setPhoneVerified(true)}
           />
         );
 

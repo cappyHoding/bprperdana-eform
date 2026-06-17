@@ -146,15 +146,15 @@ export const vidaApi = {
         const { access_token } = response.data.data;
         const signingKey = import.meta.env.VITE_VIDA_SIGNING_KEY || '';
 
-        console.log('✅ Token received:', {
-          tokenLength: access_token?.length || 0,
-          tokenPreview: access_token?.substring(0, 50) + '...',
-          hasSigningKey: !!signingKey,
-          signingKeyLength: signingKey?.length || 0,
-          tokenType: response.data.data.token_type,
-          expiresIn: response.data.data.expires_in,
-          expiresAt: response.data.data.expires_at,
-        });
+        // console.log('✅ Token received:', {
+        //   tokenLength: access_token?.length || 0,
+        //   tokenPreview: access_token?.substring(0, 50) + '...',
+        //   hasSigningKey: !!signingKey,
+        //   signingKeyLength: signingKey?.length || 0,
+        //   tokenType: response.data.data.token_type,
+        //   expiresIn: response.data.data.expires_in,
+        //   expiresAt: response.data.data.expires_at,
+        // });
 
         if (!access_token || access_token.length === 0) {
           throw new Error('Token is empty or invalid');

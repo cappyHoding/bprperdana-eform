@@ -22,11 +22,19 @@ import type { VidaSDKConfig, VidaCompleteData, VidaErrorData } from '@/types/vid
 
 interface LivenessVerificationProps {
   appId: string;                                                      // ← BARU: wajib
-  onComplete: (selfieImage: string, transactionId?: string) => void;
+  onComplete: (selfieImage: string, livenessData: {
+    transactionId?: string;
+    score?: number;
+    liveImage?: boolean;
+    code?: number;
+    message?: string;
+  }) => void;
   onError?: (error: string) => void;
   initialSelfie?: string | null;
   ktpImage?: string | null;
 }
+
+
 
 export function LivenessVerification({
   appId,
@@ -73,11 +81,6 @@ useEffect(() => {
     try {
       const tokenData = await getLivenessToken(appId);
       if (cancelled) return;
-    console.log('=== VIDA SDK DEBUG ===');
-    console.log('VidaSDK object:', typeof VidaSDK, VidaSDK);
-    console.log('container el:', document.getElementById('vida-sdk-container'));
-    console.log('token:', tokenData.access_token.substring(0, 20) + '...');
-    console.log('signingKey:', tokenData.signing_key.substring(0, 10) + '...');
       VidaSDK.init({
         token:                tokenData.access_token.trim(),
         signingKey:           tokenData.signing_key.trim(),
@@ -97,7 +100,13 @@ useEffect(() => {
         },
         onComplete: (data: any) => {
            const selfieBase64 = data.base64Image || data.image || '';
-            onComplete(selfieBase64, data.transactionId);
+            onComplete(selfieBase64, {
+                transactionId:      data.transactionId,
+                score:              data.score,
+                liveImage:          data.liveImage,
+                code:               data.code,
+                message:            data.message,
+            });
         },
         onError: (err: any) => {
           const msg = err?.message || 'Liveness verification gagal';
@@ -111,7 +120,11 @@ useEffect(() => {
     } catch (err: any) {
       if (!cancelled) {
         const msg = err.message || 'Gagal menginisialisasi liveness';
-        setError(msg);
+        if (err?.response?.status === 403) {
+          setError('Nomor HP belum diverifikasi. Kembali ke step sebelumnya dan selesaikan OTP.');
+        } else {
+            setError(msg);
+        }
         onError?.(msg);
       }
     } finally {

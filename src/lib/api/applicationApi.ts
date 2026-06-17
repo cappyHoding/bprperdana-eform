@@ -137,6 +137,10 @@ export interface CollateralItemPayload {
   description?: string;
 }
 
+export interface OTPResult {
+  message: string;
+}
+
 // ─── API Functions ────────────────────────────────────────────────────────────
 
 /**
@@ -244,13 +248,23 @@ export async function getLivenessToken(
 export async function submitLiveness(
   appId: string,
   selfieBase64: string,
-  transactionId?: string  // ← TAMBAH parameter ini
+  livenessData?: {
+    transactionId?: string;
+    score?: number;
+    liveImage?: boolean;
+    code?: number;
+    message?: string;
+  }
 ): Promise<void> {
-  const res = await client.post<ApiResponse<{ current_step: number }>>(
-    `/applications/${appId}/liveness`,
-    { selfie_base64: selfieBase64, transaction_id: transactionId ?? '' }
-  );
-  updateCurrentStep(res.data.data.current_step);
+  await client.post(`/applications/${appId}/liveness`, {
+    selfie_base64:          selfieBase64,
+    // Liveness data dari SDK
+    liveness_transaction_id: livenessData?.transactionId ?? '',
+    liveness_score:          livenessData?.score ?? 0,
+    liveness_live_image:     livenessData?.liveImage ?? false,
+    liveness_code:           livenessData?.code ?? 0,
+    liveness_message:        livenessData?.message ?? '',
+  });
 }
 
 /**
@@ -293,4 +307,31 @@ export async function submitApplication(appId: string): Promise<void> {
 export async function getApplication(appId: string) {
   const res = await client.get(`/applications/${appId}`);
   return res.data.data;
+}
+
+export async function sendOTP(appId: string): Promise<void> {
+  await client.post<ApiResponse<OTPResult>>(
+    `/applications/${appId}/otp/send`
+  );
+}
+
+export async function verifyOTP(
+  appId: string,
+  code: string
+): Promise<void> {
+  await client.post<ApiResponse<{ phone_verified: boolean }>>(
+    `/applications/${appId}/otp/verify`,
+    { code }
+  );
+}
+
+export async function uploadTransferProof(
+    appId: string,
+    imageBase64: string,
+    filename: string
+): Promise<void> {
+    await client.post(`/applications/${appId}/transfer-proof`, {
+        image_base64: imageBase64,
+        filename,
+    });
 }
