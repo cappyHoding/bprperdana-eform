@@ -367,4 +367,13 @@ export async function acceptESignTOS(appId: string): Promise<{ sign_link: string
     `/applications/${appId}/esign-tos`
   );
   return res.data.data;
+}
+
+/**
+ * Ambil konfigurasi sistem (misal: info rekening bank)
+ */
+export async function getPublicConfig(): Promise<Record<string, string>> {
+  // Beda prefix, karena route ini public: /api/v1/config
+  const res = await client.get<ApiResponse<{ configs: Record<string, string> }>>('/config');
+  return res.data.data.configs;
 }
