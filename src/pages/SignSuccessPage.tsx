@@ -3,6 +3,7 @@ import { CheckCircle2, Upload, Loader2, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import axios from 'axios';
+import { getPublicConfig } from '@/lib/api/applicationApi';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8081/api/v1';
 
@@ -21,6 +22,29 @@ export default function SignSuccessPage() {
     const [uploading,     setUploading]     = useState(false);
     const [uploaded,      setUploaded]      = useState(false);
     const [error,         setError]         = useState<string | null>(null);
+    const [bankConfig,    setBankConfig]    = useState<{
+        bank_name: string;
+        account_number: string;
+        account_name: string;
+    }>({
+        bank_name: 'Bank BPR Perdana',
+        account_number: '001-123-456789',
+        account_name: 'PT BPR Daya Perdana Nusantara',
+    });
+
+    useEffect(() => {
+        getPublicConfig().then(config => {
+            if (config['bank.bank_name'] || config['bank.account_number'] || config['bank.account_name']) {
+                setBankConfig({
+                    bank_name: config['bank.bank_name'] || bankConfig.bank_name,
+                    account_number: config['bank.account_number'] || bankConfig.account_number,
+                    account_name: config['bank.account_name'] || bankConfig.account_name,
+                });
+            }
+        }).catch(err => {
+            console.error('Failed to load bank config:', err);
+        });
+    }, []);
 
     // Preview gambar saat file dipilih
     useEffect(() => {
@@ -88,7 +112,7 @@ export default function SignSuccessPage() {
                                     Upload Bukti Transfer
                                 </h2>
                                 <p className="text-sm text-muted-foreground">
-                                    Silakan transfer dana ke rekening BPR Perdana, lalu unggah
+                                    Silakan transfer dana ke rekening {bankConfig.bank_name}, lalu unggah
                                     bukti transfer di bawah ini.
                                 </p>
                             </div>
@@ -96,13 +120,12 @@ export default function SignSuccessPage() {
                             {/* Info rekening BPR Perdana */}
                             <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm space-y-1">
                                 <p className="font-medium text-foreground">Rekening Tujuan</p>
-                                <p className="text-muted-foreground">Bank BPR Perdana</p>
+                                <p className="text-muted-foreground">{bankConfig.bank_name}</p>
                                 <p className="font-mono font-semibold text-foreground">
-                                    {/* TODO: ambil dari system config */}
-                                    No. Rek: <span className="text-primary">001-123-456789</span>
+                                    No. Rek: <span className="text-primary">{bankConfig.account_number}</span>
                                 </p>
                                 <p className="text-muted-foreground">
-                                    a.n. PT BPR Daya Perdana Nusantara
+                                    a.n. {bankConfig.account_name}
                                 </p>
                             </div>
 
